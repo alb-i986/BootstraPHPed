@@ -8,15 +8,15 @@ Features:
  - authentication 
  - authorization: fine granularity (down to subsections), inheritance (subsections can inherit privileges from its parent)
  - users organized in groups
- - configurable user roles
+ - configurable & extendable hierarchy of user roles
  - sections/subsections
  - administrative UI
 
 DESIGN GOALS
+ - low coupling [always inspiring me]
  - cleanness
  - robustness
  - extendability
- - low coupling
  - MVC style
 
 TODO
