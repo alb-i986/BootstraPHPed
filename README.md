@@ -10,11 +10,14 @@ Features:
  - users organized in groups
  - configurable user roles
  - sections/subsections
+ - administrative UI
 
 DESIGN GOALS
  - cleanness
  - robustness
  - extendability
+ - low coupling
+ - MVC style
 
 TODO
  - make it OO
