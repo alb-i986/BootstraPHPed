@@ -1,4 +1,4 @@
-BootstraPhPed
+BootstraPHPed
 =============
 
 A general purpose extendable PHP application running on top of Bootstrap (and jQuery). It can be used as a base for creating a cool Bootstrapped dynamic web site.
