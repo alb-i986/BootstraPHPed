@@ -1,6 +1,8 @@
 <?php
-
-require_once("session.php");
+/**
+ *
+ * @author Alberto 'alb-i986' Scotto
+ */
 
 ?>
 				<h1>FAQ - Ambienti</h1>

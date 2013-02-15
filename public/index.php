@@ -1,8 +1,21 @@
 <?php
+/**
+ * This is the one and only entry point to the system.
+ * It generates the XHTML skeleton of the web app (e.g. html, head, body, and main div tags),
+ * and then, thanks to a smart use of includes, it delegates to controller.php the generation
+ * of the HTML with the contents.
+ * 
+ * @author Alberto 'alb-i986' Scotto
+ */
 
-require_once("session.func.php");
-if ( !isLoggedIn() )
-	$_SESSION['user_role'] = 0; // assign role 'guest' to not authenticated users
+//namespace BootstraPHPed;
+//use BootstraPHPed\classes\Persistence;
+
+// This constant is useful for implementing a constraint: the user must see nothing but this page in his URL bar.
+// It makes easy for checking in other PHP files that they are being included in this file
+const INCLUDED_IN_INDEX = true;
+
+require_once './globals.inc.php';
 
 ?>
 <!DOCTYPE html>
@@ -13,7 +26,7 @@ if ( !isLoggedIn() )
 <meta name="description" content="BootstraPHPed is a general purpose extendable PHP application built on top of Bootstrap (and jQuery). It can be used as a base for creating a cool Bootstrapped dynamic web site.">
 <meta name="author" content="Alberto Scotto">
 
-<title>BootstraPHPed</title>
+<title><?= SYSTEM_NAME ?></title>
 
 <link rel="stylesheet" href="css/bootstrap.min.css" media="screen">
 
@@ -119,8 +132,7 @@ if ( !isLoggedIn() )
 </head>
 
 <body>
-
-	<!-- navbar fissa in cima -->
+	<!-- top fixed navbar -->
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
@@ -129,23 +141,16 @@ if ( !isLoggedIn() )
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="index.php">BootstraPHPed v0.1</a>
-		  
-		  <!-- brand alternativo con dropdown per discernere Passenger vs. Industrial
-          <a class="brand dropdown-toggle" data-target="#" href="?" data-toggle="dropdown" role="button"><b class="caret white-caret"></b> BootstraPHPed</a>
-		  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-		    <li><a href="?corp=pv">Passenger</a></li>
-		    <li><a href="?corp=im">Industrial</a></li>
-		  </ul>
-		  -->
+          <a class="brand" href="index.php"><?= SYSTEM_NAME ?></a>
 		  
           <div class="nav-collapse collapse">
             <ul class="nav pull-right">	
-<?php 
+<?php
 	if( isLoggedIn() ) {
+    $props = sess_getUser()->get(array('team', 'nickname'));
 ?>
 				<li class="divider-vertical"></li>
-				<li><a><i class="icon-user icon-white"></i> <?= $_SESSION['user_team'] ?> &gt; <?= $_SESSION['user'] ?></a></li>
+				<li><a><i class="icon-user icon-white"></i> <?= $props['team'] ?> &gt; <?= $props['nickname'] ?></a></li>
 				<li class="divider-vertical"></li>
 				<li><a href="logout.php" class="navbar-link">LOGOUT <i class="icon-off icon-white"></i></a></li>
 <?php
@@ -156,12 +161,12 @@ if ( !isLoggedIn() )
               <li class="divider-vertical"></li>
 			  
 <?php
-	$supersections = db_getSupersections();
-	foreach($supersections as $s) {
-		if( hasAccessTo($s['id'])) {
+	$supersections = $dao->getSupersections();
+	foreach( $supersections as $s ) {
+		if( sess_getUser()->hasAccessTo( $s['id'] ) ) {
 ?>
 					<li id="navbar-<?= $s['name'] ?>">
-						<a href="?page=<?= $s['name'] ?>"><?= $s['title'] ?></a>
+						<a href="index.php?page=<?= $s['name'] ?>"><?= $s['title'] ?></a>
 					</li>
 <?php
 		}
@@ -174,13 +179,13 @@ if ( !isLoggedIn() )
         </div>
       </div>
     </div>
-	
+
 	<div id="wrap">
 		<div class="container-fluid" id="container">
 <?php
 	echo "<!-- BEGIN include section -->\n";
 	
-	if( !@include("controller.php") )
+	if( ! @include './controller.php' )
 		showErr(-1);
 	
 	echo "<!-- END include section -->";
@@ -194,9 +199,9 @@ if ( !isLoggedIn() )
 	<div id="footer">
 		<div class="container-fluid">
 			<footer>
-			<p class="muted"><a href="https://github.com/alb-i986/BootstraPHPed" target="_new">BootstraPHPed</a> (read it <i>bootstrapped</i>: the 'h' is mute) lets you easily bootstrap your own cool PHP application equipped with <a href="http://twitter.github.com/bootstrap/" target="_new">Bootstrap</a> (and jQuery).</p>
-			<p class="muted"><a href="https://github.com/alb-i986/BootstraPHPed" target="_new">BootstraPHPed</a> is a project by <a href="https://github.com/alb-i986">Alberto Scotto</a></p>
-			<p class="muted"><a href="http://fpt.local"><img src="img/fpt_logo.jpg" alt="Logo FPT Passenger"></a></p>
+			<p class="muted"><a href="https://github.com/alb-i986/BootstraPHPed" target="_new">BootstraPHPed</a> lets you easily bootstrap your own cool PHP application equipped with <a href="http://twitter.github.com/bootstrap/" target="_new">Bootstrap</a> (and jQuery).</p>
+			<p class="muted"><a href="https://github.com/alb-i986/BootstraPHPed" target="_new">BootstraPHPed</a> is a project by <a href="http://about.com/alb_i986">Alberto Scotto</a></p>
+			<p class="muted"><a href="https://github.com/alb-i986/BootstraPHPed" target="_new"><img src="img/logo.jpg" alt="Logo FPT Passenger"></a></p>
 			</footer>
 		</div>
 	</div>
